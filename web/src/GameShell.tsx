@@ -152,6 +152,14 @@ export default function GameShell() {
             }
           />
         )}
+        <footer className="credits">
+          <span>
+            Words: <a href="/wordlists/LICENSE" target="_blank" rel="noopener">SCOWL / ESDB</a> by Kevin Atkinson
+          </span>
+          <a href="https://freegamestore.online" target="_blank" rel="noopener">
+            Built for freegamestore.online
+          </a>
+        </footer>
       </div>
     </PlatformShell>
   );
