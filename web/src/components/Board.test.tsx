@@ -14,12 +14,15 @@ beforeAll(() => {
   if (!("PointerEvent" in globalThis)) Object.assign(globalThis, { PointerEvent: MouseEvent });
 });
 
+// The flight animation runs on requestAnimationFrame, which outlives the test. These tests check
+// the feedback that is sent, not its motion, so the flight is stubbed out.
+vi.mock("../motion/flight", () => ({ flyTo: () => () => {} }));
+
 // Every element reports a 100 x 100 box at the origin, so percentages equal pixels.
 beforeEach(() => {
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
     left: 0, top: 0, width: 100, height: 100, right: 100, bottom: 100, x: 0, y: 0, toJSON: () => {},
   } as DOMRect);
-  window.requestAnimationFrame = (cb: FrameRequestCallback) => window.setTimeout(() => cb(0), 0) as unknown as number;
 });
 afterEach(() => vi.restoreAllMocks());
 
@@ -65,7 +68,7 @@ describe("LetterWheel", () => {
   it("sends the spelled word on release", () => {
     const onSwipe = vi.fn();
     const ref = { current: null };
-    render(<LetterWheel letters="cats" wheelRef={ref} onSwipe={onSwipe} onShuffle={() => {}} />);
+    render(<LetterWheel letters="cats" wheelRef={ref} onSwipe={onSwipe} onShuffle={() => {}} hintLabel="Hint (0)" hintDisabled onHint={() => {}} />);
     swipe(screen.getByLabelText("Letter wheel: cats"), [0, 1, 2]);
     expect(onSwipe).toHaveBeenCalledWith("cat");
   });
@@ -73,7 +76,7 @@ describe("LetterWheel", () => {
   it("picks each letter once, and does not send a single tap", () => {
     const onSwipe = vi.fn();
     const ref = { current: null };
-    render(<LetterWheel letters="cats" wheelRef={ref} onSwipe={onSwipe} onShuffle={() => {}} />);
+    render(<LetterWheel letters="cats" wheelRef={ref} onSwipe={onSwipe} onShuffle={() => {}} hintLabel="Hint (0)" hintDisabled onHint={() => {}} />);
     const wheel = screen.getByLabelText("Letter wheel: cats");
     swipe(wheel, [0, 1, 0, 2]);
     expect(onSwipe).toHaveBeenLastCalledWith("cat");
@@ -84,7 +87,7 @@ describe("LetterWheel", () => {
   it("shuffles when asked", () => {
     const onShuffle = vi.fn();
     const ref = { current: null };
-    render(<LetterWheel letters="cats" wheelRef={ref} onSwipe={() => {}} onShuffle={onShuffle} />);
+    render(<LetterWheel letters="cats" wheelRef={ref} onSwipe={() => {}} onShuffle={onShuffle} hintLabel="Hint (0)" hintDisabled onHint={() => {}} />);
     fireEvent.click(screen.getByRole("button", { name: "Shuffle" }));
     expect(onShuffle).toHaveBeenCalled();
   });

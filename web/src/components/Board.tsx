@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { useGameSounds } from "@freegamestore/games";
 import { CrosswordGrid } from "./CrosswordGrid";
 import { LetterWheel } from "./LetterWheel";
@@ -10,7 +10,7 @@ import { useShake } from "../feel/useShake";
 import { prefersReducedMotion } from "../motion/reducedMotion";
 import type { Level } from "../game/crossword/levels";
 import { layoutGrid, startCell } from "../game/grid";
-import { isSolved, playWord, type Session } from "../game/session";
+import { isSolved, playWord, spendHint, hintsAvailable, type Session } from "../game/session";
 import { shuffleLetters } from "../game/wheel";
 
 const BURST_COLOURS = ["#2563eb", "#16a34a", "#d97706"];
@@ -23,6 +23,8 @@ interface BoardProps {
   onSession: (next: Session) => void;
   /** Moves to the next level. Null when the player has reached the last one. */
   onNext: (() => void) | null;
+  /** Shown in the level-complete panel, for example a daily time and the leaderboard. */
+  footer?: ReactNode;
 }
 
 /**
@@ -30,7 +32,7 @@ interface BoardProps {
  * a found word flies into the grid, a bonus word flies into the jar, and a miss shakes the wheel.
  * The wheel order is local, and shuffling changes only the order.
  */
-export function Board({ level, session, validWords, onSession, onNext }: BoardProps) {
+export function Board({ level, session, validWords, onSession, onNext, footer }: BoardProps) {
   const [wheel, setWheel] = useState(level.letters);
   const { playScore, playError, playMove } = useGameSounds();
   const boardRef = useRef<HTMLDivElement>(null);
@@ -41,6 +43,12 @@ export function Board({ level, session, validWords, onSession, onNext }: BoardPr
   const shake = useShake(wheelRef, { amplitude: 6, duration: 320 });
   const layout = layoutGrid(level.placements);
   const solved = isSolved(session);
+  const hints = hintsAvailable(session);
+
+  const onHint = () => {
+    const next = spendHint(session);
+    if (next) onSession(next);
+  };
 
   const burstAt = (element: Element) => {
     const board = boardRef.current?.getBoundingClientRect();
@@ -81,7 +89,7 @@ export function Board({ level, session, validWords, onSession, onNext }: BoardPr
 
   return (
     <div ref={boardRef} className="board">
-      <CrosswordGrid ref={gridRef} level={level} found={session.found} />
+      <CrosswordGrid ref={gridRef} level={level} found={session.found} hintCells={session.hintCells} />
       <div ref={jarRef} className="jar" aria-live="polite">
         Bonus: {session.bonus.size}
         {session.bonus.size > 0 && <span className="jar-words"> {[...session.bonus].sort().join(" · ")}</span>}
@@ -91,10 +99,14 @@ export function Board({ level, session, validWords, onSession, onNext }: BoardPr
         wheelRef={wheelRef}
         onSwipe={onSwipe}
         onShuffle={() => setWheel((w) => shuffleLetters(w))}
+        hintLabel={`Hint (${Math.max(0, hints)})`}
+        hintDisabled={hints <= 0 || solved}
+        onHint={onHint}
       />
       {solved && (
         <div className="level-done">
           <p>Level complete</p>
+          {footer}
           {onNext ? (
             <button type="button" className="shuffle-btn" onClick={onNext}>
               Next level

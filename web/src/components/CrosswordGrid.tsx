@@ -5,14 +5,16 @@ import { cellKey, layoutGrid } from "../game/grid";
 interface CrosswordGridProps {
   level: Level;
   found: ReadonlySet<string>;
+  /** Cells revealed by hints. */
+  hintCells: ReadonlySet<string>;
 }
 
 /**
- * The crossword. A cell shows its letter once any word that covers it is found. Each shown
+ * The crossword. A cell shows its letter once any word that covers it is found, or a hint reveals it. Each shown
  * cell has data-cell="row,col", so the board can aim effects at it.
  */
 export const CrosswordGrid = forwardRef<HTMLDivElement, CrosswordGridProps>(function CrosswordGrid(
-  { level, found },
+  { level, found, hintCells },
   ref,
 ) {
   const layout = useMemo(() => layoutGrid(level.placements), [level]);
@@ -26,7 +28,7 @@ export const CrosswordGrid = forwardRef<HTMLDivElement, CrosswordGridProps>(func
         rows.push(<div key={key} className="cell-gap" />);
         continue;
       }
-      const shown = cell.words.some((w) => found.has(w));
+      const shown = hintCells.has(key) || cell.words.some((w) => found.has(w));
       rows.push(
         <div key={key} data-cell={key} className={shown ? "cell reveal" : "cell"}>
           {shown ? cell.letter : ""}

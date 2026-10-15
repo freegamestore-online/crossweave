@@ -11,13 +11,16 @@ interface LetterWheelProps {
   /** Called on release with the word the swipe spelled. Taps of one letter are not sent. */
   onSwipe: (word: string) => void;
   onShuffle: () => void;
+  hintLabel: string;
+  hintDisabled: boolean;
+  onHint: () => void;
 }
 
 /**
  * The letter wheel. A swipe that starts on a letter and passes over others spells a word.
  * Letters are picked once each, and the trail is drawn as the pointer moves.
  */
-export function LetterWheel({ letters, wheelRef, onSwipe, onShuffle }: LetterWheelProps) {
+export function LetterWheel({ letters, wheelRef, onSwipe, onShuffle, hintLabel, hintDisabled, onHint }: LetterWheelProps) {
   const positions = useMemo(() => wheelPositions(letters.length), [letters.length]);
   const [trail, setTrail] = useState<number[]>([]);
   const [pointer, setPointer] = useState<Point | null>(null);
@@ -87,9 +90,14 @@ export function LetterWheel({ letters, wheelRef, onSwipe, onShuffle }: LetterWhe
           </span>
         ))}
       </div>
-      <button type="button" className="shuffle-btn" onClick={onShuffle}>
-        Shuffle
-      </button>
+      <div className="wheel-buttons">
+        <button type="button" className="shuffle-btn" onClick={onShuffle}>
+          Shuffle
+        </button>
+        <button type="button" className="shuffle-btn" onClick={onHint} disabled={hintDisabled}>
+          {hintLabel}
+        </button>
+      </div>
     </div>
   );
 }

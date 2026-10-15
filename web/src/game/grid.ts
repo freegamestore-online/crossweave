@@ -47,3 +47,13 @@ export function layoutGrid(placements: readonly Placement[]): GridLayout {
 export function startCell(placement: Placement, layout: GridLayout): string {
   return cellKey(placement.row - layout.origin.row, placement.col - layout.origin.col);
 }
+
+/** The cells a placed word covers, counted from the grid's top-left, in order. */
+export function wordCells(placement: Placement, layout: GridLayout): string[] {
+  return [...placement.word].map((_, k) =>
+    cellKey(
+      placement.row - layout.origin.row + (placement.dir === "down" ? k : 0),
+      placement.col - layout.origin.col + (placement.dir === "across" ? k : 0),
+    ),
+  );
+}
