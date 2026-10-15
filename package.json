@@ -9,6 +9,7 @@
     "build": "pnpm --filter @crossweave/web build",
     "preview": "pnpm --filter @crossweave/web preview",
     "typecheck": "pnpm --filter @crossweave/web exec tsc -b",
+    "lint": "pnpm --filter @crossweave/web lint",
     "test": "pnpm --filter @crossweave/web test"
   }
 }

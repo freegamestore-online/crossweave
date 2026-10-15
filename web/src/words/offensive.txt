@@ -1,0 +1,83 @@
+# Offensive-word blocklist, applied to both shipped wordlists and to every
+# word a player can swipe. One lowercase word per line; lines starting with
+# "#" are comments. Inflected forms are listed explicitly, because the filter
+# matches whole words only ("dickens" and "assassin" must stay playable).
+#
+# This is a starting list, not a complete one. Add to it, never remove a
+# line without a reason noted here.
+
+# Sexual and scatological profanity
+ass
+asses
+asshole
+assholes
+bastard
+bastards
+bitch
+bitches
+bitched
+bitching
+bitchy
+bitchier
+bitchiest
+cock
+cocks
+cocksucker
+cunt
+cunts
+dick
+dicks
+fuck
+fucks
+fucked
+fucker
+fuckers
+fucking
+motherfucker
+motherfuckers
+pussy
+pussies
+piss
+pisses
+pissed
+pissing
+prick
+pricks
+shit
+shits
+shitty
+shittier
+shittiest
+shitting
+slut
+sluts
+sluttish
+twat
+twats
+tits
+wank
+wanker
+wankers
+whore
+whores
+whorehouse
+whorehouses
+
+# Slurs and hate terms
+faggot
+faggots
+fag
+fags
+nigga
+niggas
+nigger
+niggers
+kike
+kikes
+spic
+spics
+chink
+chinks
+retard
+retards
+retarded
