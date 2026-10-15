@@ -80,3 +80,231 @@ body {
   height: 100%;
   overflow: hidden;
 }
+
+/* Play area: one column, fitted to the viewport, big targets for one-handed play. */
+.play-area {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.board {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 0.75rem;
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem;
+  box-sizing: border-box;
+}
+
+.notice {
+  margin: auto;
+  color: var(--muted);
+}
+
+/* Crossword grid */
+.grid-board {
+  display: grid;
+  gap: 4px;
+  width: min(88vw, 360px);
+  max-height: 42svh;
+}
+
+.cell,
+.cell-gap {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  font: 800 clamp(0.9rem, 4.5vw, 1.25rem) "Manrope", system-ui, sans-serif;
+  text-transform: uppercase;
+}
+
+.cell {
+  background: var(--panel);
+  border: 2px solid var(--line-strong);
+  color: var(--ink);
+}
+
+.cell-gap {
+  visibility: hidden;
+}
+
+.cell.reveal {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  animation: cell-pop 360ms ease-out;
+}
+
+@keyframes cell-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Bonus jar */
+.jar {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+  min-height: 1.4em;
+}
+
+.jar-words {
+  color: var(--ink);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Letter wheel */
+.wheel-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.wheel {
+  position: relative;
+  width: min(72vw, 300px);
+  aspect-ratio: 1;
+  touch-action: none;
+}
+
+.wheel-letter {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 16vw, 64px);
+  height: clamp(52px, 16vw, 64px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--line-strong);
+  color: var(--ink);
+  font: 800 1.6rem "Manrope", system-ui, sans-serif;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+.wheel-letter.in-trail {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.trail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.trail polyline {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.7;
+}
+
+.shuffle-btn {
+  min-width: 9rem;
+  min-height: 3rem;
+  padding: 0.6rem 1.25rem;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff;
+  font: 700 1rem "Manrope", system-ui, sans-serif;
+  cursor: pointer;
+}
+
+/* Feedback: a found word flies from the wheel into the grid */
+.fly-chip {
+  position: fixed;
+  z-index: 800;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff;
+  font: 800 0.9rem "Manrope", system-ui, sans-serif;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Level complete */
+.level-done {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius);
+  background: var(--dock);
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.celebration {
+  position: absolute;
+  inset: 0;
+  z-index: 650;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.celebrate-banner {
+  margin: 0;
+  color: var(--accent);
+  font: 800 1.5rem "Fraunces", serif;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--accent);
+  animation-name: confetti-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translate(var(--dx), 110vh) rotate(var(--rot));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell.reveal,
+  .confetti-piece {
+    animation: none;
+  }
+}
